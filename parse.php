@@ -18,7 +18,7 @@ if($element == null){
     exit(1);
 }
 
-$result = "Region Id,Sick,Healed,Die,Region Name";
+$result = "Region Id,Sick,Healed,Die,Region Name\n";
 $sumSick = 0;
 $sumHealed = 0;
 $sumDie = 0;
