@@ -1,4 +1,4 @@
-# covid19 reginal data for Russia
+# covid19 regional data for Russia
 
 Parsed data with number of COVID-19 cases in russian regions
 
