@@ -23,7 +23,6 @@ function ParseToday()
  * @throws Exception
  */
 function ParseWebArchive($date){
-    $url = 'https://web.archive.org/web/20200416044534/https://xn--80aesfpebagmfblc0a.xn--p1ai/';
     $tomorrow = clone $date;
     $tomorrow->modify("+1 DAY");
 
