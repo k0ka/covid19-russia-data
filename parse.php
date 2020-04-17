@@ -38,5 +38,4 @@ foreach ($element->find('table tr') as $regionData){
 }
 
 $result .= "99,$sumSick,$sumHealed,$sumDie,Всего\n";
-echo $result;
 file_put_contents('data/' . date('Y-m-d') . '.csv', $result);
