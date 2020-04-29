@@ -11,7 +11,7 @@ require_once 'regions.php';
 function ParseToday()
 {
     // https://стопкоронавирус.рф/
-    $url = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/';
+    $url = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/information/';
     $date = new DateTime('now');
     ParseStopCoronavirusUrl($url, $date);
 }
@@ -38,7 +38,7 @@ function ParseWebArchive($date){
 
     $webArchiveUrl = 'https://web.archive.org/web/' . $tomorrow->format('Ymd') . sprintf('%06d', $time) . '/https://xn--80aesfpebagmfblc0a.xn--p1ai/';
 
-    ParseStopCoronavirusUrl($webArchiveUrl, $date);
+    ParseStopCoronavirusUrlOld($webArchiveUrl, $date);
 }
 
 /**
@@ -49,6 +49,53 @@ function ParseWebArchive($date){
  * @throws Exception
  */
 function ParseStopCoronavirusUrl($url, $date)
+{
+    $regions = new Regions();
+
+    $html = UploadUrl($url);
+    $dom = str_get_html($html);
+
+    $element = $dom->find('cv-spread-overview', 0);
+    if($element == null){
+        echo "No cv-spread-overview found\n";
+        exit(1);
+    }
+
+    $rows = json_decode($element->{":spread-data"}, true);
+
+    $result = "Region Id,Sick,Healed,Die,Region Name\n";
+    $sumSick = 0;
+    $sumHealed = 0;
+    $sumDie = 0;
+    foreach ($rows as $row){
+        /** @var simple_html_dom_node $regionData */
+        $regionName = trim($row['title']);
+        $sick = $row['sick'];
+        $healed = $row['healed'];
+        $die = $row['died'];
+
+        $sumSick += $sick;
+        $sumHealed += $healed;
+        $sumDie += $die;
+
+        $regionId = $regions->GetRegionId($regionName);
+        $result .= "$regionId,$sick,$healed,$die,$regionName\n";
+    }
+
+    $result .= "99,$sumSick,$sumHealed,$sumDie,Всего\n";
+
+    file_put_contents("data/{$date->format('Y-m-d')}.csv", $result);
+}
+
+
+/**
+ * Parses url from site or webarchive prior 29.04 and saves to file
+ *
+ * @param $url
+ * @param DateTime $date
+ * @throws Exception
+ */
+function ParseStopCoronavirusUrlOld($url, $date)
 {
     $regions = new Regions();
 
