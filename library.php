@@ -1,5 +1,7 @@
 <?php
 
+define('MAX_FILE_SIZE', 10000000);
+
 require_once 'simple_html_dom.php';
 require_once 'regions.php';
 
